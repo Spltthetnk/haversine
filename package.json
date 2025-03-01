@@ -1,13 +1,17 @@
 {
   "name": "haversine",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A simple haversine module",
-  "main": "haversine.js",
+  "main": "dist/src/haversine.js",
+  "types": "dist/src/haversine.d.ts",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/test.js --ui tdd"
+    "build": "tsc",
+    "prepack": "tsc",
+    "prepublish": "npm run build",
+    "test": "ts-node node_modules/mocha/bin/mocha test/ts/test.ts --ui tdd"
   },
   "repository": {
     "type": "git",
@@ -20,8 +24,16 @@
     "geolocation"
   ],
   "author": "Nick Justice (niix)",
+  "maintainers": [
+    "Elijah Lopez"
+  ],
   "license": "MIT",
   "devDependencies": {
-    "mocha": "*"
-  }
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.13.8",
+    "mocha": "*",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }
