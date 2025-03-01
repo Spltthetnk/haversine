@@ -32,7 +32,6 @@ type CoordinateInput =
 
 interface HaversineOptions {
   unit?: Unit;
-  threshold?: number;
   format?: CoordinateFormat;
 }
 
@@ -75,16 +74,16 @@ function convertCoordinates(format: CoordinateFormat, coordinates: CoordinateInp
 
 /**
  *  Calculate the haversine distance between two points.
- *  @param startCoordinates - Starting coordinates in the format provided by `format`
- *  @param endCoordinates - Ending coordinates in the format provided by `format`
- *  @param options - Options object with unit, threshold, and format
- *  @returns Distance apart if threshold is undefined, else a boolean for if the distance apart is within the threshold
+ *  @param startCoordinates Starting coordinates in the format provided by `format`
+ *  @param endCoordinates Ending coordinates in the format provided by `format`
+ *  @param options Options object with unit, threshold, and format
+ *  @returns Distance apart
  */
 export default function haversine(
   startCoordinates: CoordinateInput,
   endCoordinates: CoordinateInput,
-  { unit = 'km', threshold, format }: HaversineOptions = {}
-): number | boolean {
+  { unit = 'km', format }: HaversineOptions = {}
+): number {
   if (!(unit in RADII)) throw new TypeError(`Invalid unit provided to haversine. Got ${unit}`);
 
   const R = RADII[unit];
@@ -104,10 +103,15 @@ export default function haversine(
   const lat1 = convertToRadian(start.latitude);
   const lat2 = convertToRadian(end.latitude);
 
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  if (threshold !== undefined) return threshold > (R * c);
   return R * c;
+}
+
+/**
+ * Returns `true` if the distance between two coordinates is strictly less than the threshold
+ */
+export function haversineIsWithin(startCoordinates: CoordinateInput, endCoordinates: CoordinateInput, threshold: number, { unit = 'km', format }: HaversineOptions = {}) {
+  return threshold > haversine(startCoordinates, endCoordinates, { unit, format });
 }

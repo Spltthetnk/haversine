@@ -1,4 +1,4 @@
-import haversine, { CoordinateFormat, Unit } from '../../src/haversine';
+import haversine, { CoordinateFormat, Unit, haversineIsWithin } from '../../src/haversine';
 import { strict as assert } from 'assert';
 import { suite, test } from 'mocha';
 
@@ -81,11 +81,11 @@ suite('haversine', function () {
   });
 
   test('it should return true that distance is within 1 mi threshold', function () {
-    assert.equal(true, haversine(tests[0][0], tests[0][1], { threshold: 1, unit: 'mile' }));
+    assert.equal(true, haversineIsWithin(tests[0][0], tests[0][1], 1, { unit: 'mile' }));
   });
 
   test('it should return true that distance is within 1 km threshold', function () {
-    assert.equal(true, haversine(tests[1][0], tests[1][1], { threshold: 1, unit: 'km' }));
+    assert.equal(true, haversineIsWithin(tests[1][0], tests[1][1], 1, { unit: 'km' }));
   });
 
   test('it should throw TypeError for invalid unit', function () {
